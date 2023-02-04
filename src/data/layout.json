@@ -1,14 +1,12 @@
-{ 
-  "settings":
-    {
-      "layout_type":"ltr",
-      "layout":"Barcelona",
-      "sidebar_setting":"default-sidebar"
+{
+    "settings": {
+        "layout_type": "ltr",
+        "layout": "Dubai",
+        "sidebar_setting": "default-sidebar"
     },
-  "color":
-    {
-          "layout_version":"light",
-          "primary_color":"#7366ff",
-          "secondary_color":"#f73164"
+    "color": {
+        "layout_version": "light",
+        "primary_color": "#7366ff",
+        "secondary_color": "#f73164"
     }
-  }
+}

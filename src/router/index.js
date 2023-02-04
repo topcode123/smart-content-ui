@@ -45,6 +45,10 @@ import ChartWidgets from '../pages/widgets/chart_widgets';
 import projectlist from '../pages/project/project-list';
 import createproject from '../pages/project/create-project';
 
+// template
+import CreateTemplate from '../pages/template/createtemplate';
+import ListTemplate from '../pages/template/listtemplate'
+
 /* uikits */
 import alert from '../pages/uikits/alert';
 import Helperclasses from '../pages/uikits/helper_classes';
@@ -283,6 +287,28 @@ const routes = [
                 component: createproject,
                 meta: {
                     title: 'Create Project | Cuba - Premium Admin Template',
+                },
+            },
+        ],
+    },
+    {
+        path: '/smart-content',
+        component: Body,
+        children: [
+            {
+                path: 'create-template',
+                name: 'create-template',
+                component: CreateTemplate,
+                meta: {
+                    title: 'Tạo template',
+                },
+            },
+            {
+                path: 'list-template',
+                name: 'list-template',
+                component: ListTemplate,
+                meta: {
+                    title: 'Danh sách template',
                 },
             },
         ],
@@ -1522,14 +1548,12 @@ router.beforeEach((to, from, next) => {
         if (to.meta.title) document.title = to.meta.title;
         // const CurrentUser = firebase.auth().currentUser;
         const path = ['/auth/login', '/auth/register'];
-        console.log(to.path)
         if (path.includes(to.path) || to.path === '/callback' || Userauth.isAuthenticatedJWTUser()) {
             return next();
         }
-        
+
         next('/auth/login');
         return next();
-        
     });
 });
 

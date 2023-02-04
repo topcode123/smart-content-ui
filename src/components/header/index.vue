@@ -4,7 +4,7 @@
     <Logo />
     <div class="left-header col horizontal-wrapper pl-0">
       <ul class="horizontal-menu">
-        <!-- <BonusUI /> -->
+        <BonusUI />
         <LevelMenu />
       </ul>
     </div>
