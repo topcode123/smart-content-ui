@@ -1,3 +1,10 @@
+import Templates from '../../data/list-template';
+
+
+const state = {
+    listTemplate: Templates.data
+}
+
 export const templates = {
     namespaced: true,
     state: {
@@ -7,7 +14,7 @@ export const templates = {
         getListTemplate({ dispatch, commit }) {
             // template service
             // get list template
-            commit('', {});
+            commit('setListTemplate', Templates.data);
         },
     },
     mutations: {

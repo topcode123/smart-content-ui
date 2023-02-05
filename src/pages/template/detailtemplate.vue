@@ -9,7 +9,7 @@
                 <div class="col-sm-12">
                     <px-card>
                         <div slot="with-padding">
-                            <form @submit="handleCreateTemplate">
+                            <form @submit="handleUpdateTemplate">
                                 <div class="form theme-form">
                                     <div class="row">
                                         <div class="col">
@@ -147,6 +147,12 @@
                                                 >
                                                     Add
                                                 </button>
+                                                <a
+                                                    class="btn btn-danger"
+                                                    href="#"
+                                                >
+                                                    Cancel
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -166,9 +172,12 @@ import 'vue2-dropzone/dist/vue2Dropzone.min.css';
 import { baseURL } from '../../constants/config';
 
 export default {
-    name: 'ListTemplate',
+    name: 'DetailTemplate',
     components: {
         vueDropzone: vue2Dropzone,
+    },
+    props: {
+        templateId: String
     },
     data() {
         return {
@@ -192,42 +201,22 @@ export default {
         };
     },
     mounted() {
-        this.getPutPresignedURL()
+        console.log(this.$route.params)
+        this.getTemplateDetail();
     },
     methods: {
-        handleCreateTemplate(event) {
+        handleUpdateTemplate(event) {
             event.preventDefault();
-            if (!this.displayName || !this.prompt || !this.description || !this.temperature || !this.maxTokens) {
-                this.$toasted.show('Các trường không được để trống', {
-                    theme: 'outline',
-                    position: 'top-right',
-                    type: 'error',
-                    duration: 2000,
-                });
 
-                return;
-            }
-
-            const template = {
-                displayName: this.displayName,
-                prompt: this.prompt,
-                descriptions: this.description,
-                temperature: this.temperature,
-                maxTokens: this.maxTokens,
-                topP: this.topP,
-                frequencyPenalty: this.frequencyPenalty,
-                presencePenalty: this.presencePenalty,
-            };
-
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    Authorization: this.$store.state.authentication.user.accessToken,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(template),
-            };
-            fetch(`${baseURL}/smart-content/template`, requestOptions)
+            this.$toasted.show(' New order has been placed ', {
+                theme: 'outline',
+                position: 'top-right',
+                type: 'success',
+                duration: 2000,
+            });
+        },
+        getTemplateDetail() {
+            fetch(`${baseURL}/smart-content/template${this.templateId}`, requestOptions)
                 .then((response) => {
                     this.$toasted.show('Tạo tempate thành công', {
                         theme: 'outline',
@@ -248,18 +237,6 @@ export default {
                         duration: 2000,
                     });
                 });
-        },
-        getPutPresignedURL() {
-            const requestOptions = {
-                method: 'GET',
-                headers: {
-                    Authorization: this.$store.state.authentication.user.accessToken,
-                    'Content-Type': 'application/json',
-                },
-            };
-            fetch(`${baseURL}/smart-content/template/presigned-image-upload`, requestOptions).then((response) => {
-                console.log(response);
-            });
         },
     },
 };

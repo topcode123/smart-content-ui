@@ -47,7 +47,9 @@ import createproject from '../pages/project/create-project';
 
 // template
 import CreateTemplate from '../pages/template/createtemplate';
-import ListTemplate from '../pages/template/listtemplate'
+import ListTemplate from '../pages/template/listtemplate';
+import DetailTemplate from '../pages/template/detailtemplate';
+import UseTemplate from '../pages/template/usetemplate';
 
 /* uikits */
 import alert from '../pages/uikits/alert';
@@ -309,6 +311,22 @@ const routes = [
                 component: ListTemplate,
                 meta: {
                     title: 'Danh sách template',
+                },
+            },
+            {
+                path: 'detail-template/:id',
+                name: 'Detail Template',
+                component: DetailTemplate,
+                meta: {
+                    title: 'Chi tiết template',
+                },
+            },
+            {
+                path: 'client/template/:id',
+                name: 'Use Template',
+                component: UseTemplate,
+                meta: {
+                    title: 'Template',
                 },
             },
         ],

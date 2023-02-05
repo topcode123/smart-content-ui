@@ -81,8 +81,6 @@ Vue.use(VueI18n);
 
 
 // setup fake backend
-import { configureFakeBackend } from './_helpers';
-configureFakeBackend();
 
 const messages = { en: en, es: es };
 const locale = (localStorage.getItem('currentLanguage') && localeOptions.filter(x => x.id === localStorage.getItem('currentLanguage')).length > 0) ? localStorage.getItem('currentLanguage') : defaultLocale;

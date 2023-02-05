@@ -2,6 +2,7 @@
 
 /* eslint-disable */
 import { authHeader } from '../_helpers';
+import { baseURL } from '../constants/config';
 
 export const userService = {
     login,
@@ -16,11 +17,11 @@ function login(username, password) {
         body: JSON.stringify({ username, password })
     };
 
-    return fetch(`http://localhost:8080/users/authenticate`, requestOptions)
+    return fetch(`${baseURL}/auth/login`, requestOptions)
         .then(handleResponse)
         .then(user => {
             // login successful if there's a jwt token in the response
-            if (user.token) {
+            if (user.accessToken) {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('user', JSON.stringify(user));
             }

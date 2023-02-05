@@ -1,0 +1,24 @@
+{
+    "data": [
+      {
+        "id": "63d8cec85d900176f84b8371",
+        "displayName": "Kịch bản quảng cáo FB",
+        "descriptions": "Chủ trường mần non"
+      },
+      {
+        "id": "63d91f9e5d900176f84b8374",
+        "displayName": "Kiểm tra chất lượng nội dung",
+        "descriptions": "Đánh giá chất lượng nội dung của 1 bài viết"
+      },
+      {
+        "id": "63db3b995d900176f84b837d",
+        "displayName": "Thông tin sản phẩm từ 1 url",
+        "descriptions": "Mô tả thông tin chi tiết sản phẩm"
+      },
+      {
+        "id": "63db77635d900176f84b8380",
+        "displayName": "Viết lại bài từ 1 url",
+        "descriptions": "Viết lại bài viết từ 1 url"
+      }
+    ]
+  }
