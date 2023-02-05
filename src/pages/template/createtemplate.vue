@@ -127,14 +127,15 @@
 
                                     <div class="row">
                                         <div class="col">
-                                            <div class="form-group">
-                                                <label>Hình ảnh</label>
-                                                <vue-dropzone
-                                                    id="singledropzone"
-                                                    :options="singledropzoneOptions"
-                                                    class="dropzone digits"
-                                                >
-                                                </vue-dropzone>
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">Hình ảnh</label>
+                                                <div class="col-sm-9">
+                                                    <input
+                                                        type="file"
+                                                        class="form-control form-control-file"
+                                                        @change="handleChangeFileUpload"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -172,15 +173,6 @@ export default {
     },
     data() {
         return {
-            singledropzoneOptions: {
-                url: 'http://localhost:8080',
-                thumbnailWidth: 150,
-                maxFiles: 1,
-                maxFilesize: 2,
-                addRemoveLinks: true,
-                dictDefaultMessage:
-                    "<i class='icon-cloud-up'></i><h6>Drop files here or click to upload.</h6><span>(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>",
-            },
             displayName: 'viết bài miêu tả',
             prompt: 'viết bài miêu tả [phong cảnh] tại [dia diem] [review]',
             description: 'viết bài miêu tả',
@@ -189,15 +181,29 @@ export default {
             topP: 1,
             frequencyPenalty: 0,
             presencePenalty: 0,
+            filename: '',
+            putFilePresignedURL: '',
+            templateImage: null,
         };
     },
     mounted() {
-        this.getPutPresignedURL()
+        this.getPutPresignedURL();
     },
     methods: {
-        handleCreateTemplate(event) {
+        handleChangeFileUpload(event) {
+            this.templateImage = event.target.files[0];
+            
+        },
+        async handleCreateTemplate(event) {
             event.preventDefault();
-            if (!this.displayName || !this.prompt || !this.description || !this.temperature || !this.maxTokens) {
+
+            if (
+                !this.displayName ||
+                !this.prompt ||
+                !this.description ||
+                !this.temperature ||
+                !this.maxTokens
+            ) {
                 this.$toasted.show('Các trường không được để trống', {
                     theme: 'outline',
                     position: 'top-right',
@@ -207,6 +213,24 @@ export default {
 
                 return;
             }
+            
+            let binaryImage = null
+            // let reader = new FileReader();
+            // reader.onload(function (e) {
+                
+            //     binaryImage = e.target.result;
+            // });
+
+            // reader.readAsDataURL(this.templateImage);
+
+            const uploadFileOptions = {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": "image/jpeg"
+                },
+                body: binaryImage,
+                redirect: 'follow',
+            };
 
             const template = {
                 displayName: this.displayName,
@@ -217,6 +241,7 @@ export default {
                 topP: this.topP,
                 frequencyPenalty: this.frequencyPenalty,
                 presencePenalty: this.presencePenalty,
+                filename: this.filename,
             };
 
             const requestOptions = {
@@ -227,20 +252,37 @@ export default {
                 },
                 body: JSON.stringify(template),
             };
-            fetch(`${baseURL}/smart-content/template`, requestOptions)
+
+            await fetch(this.putFilePresignedURL, uploadFileOptions)
                 .then((response) => {
-                    this.$toasted.show('Tạo tempate thành công', {
-                        theme: 'outline',
-                        position: 'top-right',
-                        type: 'success',
-                        duration: 2000,
-                    });
-                    this.displayName = '';
-                    this.prompt = '';
-                    this.description = 0;
-                    this.maxTokens = 1024;
+                    fetch(`${baseURL}/smart-content/template`, requestOptions)
+                        .then((response) => {
+                            this.$toasted.show('Tạo tempate thành công', {
+                                theme: 'outline',
+                                position: 'top-right',
+                                type: 'success',
+                                duration: 2000,
+                            });
+                            this.displayName = '';
+                            this.prompt = '';
+                            this.description = 0;
+                            this.maxTokens = 1024;
+                            setTimeout(() => {
+                                this.$router.go();
+                            }, 1000);
+                        })
+                        .catch((error) => {
+                            console.log(JSON.stringify(error));
+                            this.$toasted.show('Tạo template thất bại', {
+                                theme: 'outline',
+                                position: 'top-right',
+                                type: 'error',
+                                duration: 2000,
+                            });
+                        });
                 })
                 .catch((error) => {
+                    console.log(JSON.stringify(error));
                     this.$toasted.show('Tạo template thất bại', {
                         theme: 'outline',
                         position: 'top-right',
@@ -249,7 +291,7 @@ export default {
                     });
                 });
         },
-        getPutPresignedURL() {
+        async getPutPresignedURL() {
             const requestOptions = {
                 method: 'GET',
                 headers: {
@@ -257,9 +299,14 @@ export default {
                     'Content-Type': 'application/json',
                 },
             };
-            fetch(`${baseURL}/smart-content/template/presigned-image-upload`, requestOptions).then((response) => {
-                console.log(response);
-            });
+            const presignedURLRequest = await fetch(
+                `${baseURL}/smart-content/template/presigned-image-upload`,
+                requestOptions
+            );
+            const presignedURLResponse = await presignedURLRequest.json();
+            console.log(presignedURLResponse);
+            this.putFilePresignedURL = presignedURLResponse['url'];
+            this.filename = presignedURLResponse['fileId'];
         },
     },
 };

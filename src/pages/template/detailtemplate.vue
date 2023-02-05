@@ -127,14 +127,15 @@
 
                                     <div class="row">
                                         <div class="col">
-                                            <div class="form-group">
-                                                <label>Hình ảnh</label>
-                                                <vue-dropzone
-                                                    id="singledropzone"
-                                                    :options="singledropzoneOptions"
-                                                    class="dropzone digits"
-                                                >
-                                                </vue-dropzone>
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">Hình ảnh</label>
+                                                <div class="col-sm-9">
+                                                    <input
+                                                        type="file"
+                                                        class="form-control form-control-file"
+                                                        @change="handleChangeFileUpload"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -145,14 +146,8 @@
                                                     class="btn btn-success mr-3"
                                                     type="submit"
                                                 >
-                                                    Add
+                                                    Update
                                                 </button>
-                                                <a
-                                                    class="btn btn-danger"
-                                                    href="#"
-                                                >
-                                                    Cancel
-                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -167,58 +162,92 @@
     </div>
 </template>
 <script>
-import vue2Dropzone from 'vue2-dropzone';
-import 'vue2-dropzone/dist/vue2Dropzone.min.css';
 import { baseURL } from '../../constants/config';
 
 export default {
     name: 'DetailTemplate',
-    components: {
-        vueDropzone: vue2Dropzone,
-    },
-    props: {
-        templateId: String
-    },
+    components: {},
     data() {
         return {
-            singledropzoneOptions: {
-                url: 'http://localhost:8080',
-                thumbnailWidth: 150,
-                maxFiles: 1,
-                maxFilesize: 2,
-                addRemoveLinks: true,
-                dictDefaultMessage:
-                    "<i class='icon-cloud-up'></i><h6>Drop files here or click to upload.</h6><span>(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>",
-            },
-            displayName: 'viết bài miêu tả',
-            prompt: 'viết bài miêu tả [phong cảnh] tại [dia diem] [review]',
-            description: 'viết bài miêu tả',
+            templateId: '',
+            displayName: '',
+            prompt: '',
+            description: '',
             temperature: 0.7,
             maxTokens: 1024,
             topP: 1,
             frequencyPenalty: 0,
             presencePenalty: 0,
+            filename: '',
+            putFilePresignedURL: '',
+            templateImage: null,
         };
     },
     mounted() {
-        console.log(this.$route.params)
-        this.getTemplateDetail();
+        this.templateId = this.$route.params?.id;
+        this.getPutPresignedURL();
+        this.getDetailTemplate();
     },
     methods: {
-        handleUpdateTemplate(event) {
+        handleChangeFileUpload(event) {
+            this.templateImage = event.target.files[0];
+        },
+        async handleUpdateTemplate(event) {
             event.preventDefault();
 
-            this.$toasted.show(' New order has been placed ', {
-                theme: 'outline',
-                position: 'top-right',
-                type: 'success',
-                duration: 2000,
-            });
-        },
-        getTemplateDetail() {
-            fetch(`${baseURL}/smart-content/template${this.templateId}`, requestOptions)
+            if (!this.displayName || !this.prompt || !this.description || !this.temperature || !this.maxTokens) {
+                this.$toasted.show('Các trường không được để trống', {
+                    theme: 'outline',
+                    position: 'top-right',
+                    type: 'error',
+                    duration: 2000,
+                });
+
+                return;
+            }
+
+            let binaryImage = null;
+            // let reader = new FileReader();
+            // reader.onload(function (e) {
+
+            //     binaryImage = e.target.result;
+            // });
+
+            // reader.readAsDataURL(this.templateImage);
+
+            const uploadFileOptions = {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'image/jpeg',
+                },
+                body: binaryImage,
+                redirect: 'follow',
+            };
+
+            const template = {
+                displayName: this.displayName,
+                prompt: this.prompt,
+                descriptions: this.description,
+                temperature: this.temperature,
+                maxTokens: this.maxTokens,
+                topP: this.topP,
+                frequencyPenalty: this.frequencyPenalty,
+                presencePenalty: this.presencePenalty,
+                filename: this.filename,
+            };
+
+            const requestOptions = {
+                method: 'PUT',
+                headers: {
+                    Authorization: this.$store.state.authentication.user.accessToken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(template),
+            };
+
+            fetch(`${baseURL}/smart-content/template/${this.templateId}`, requestOptions)
                 .then((response) => {
-                    this.$toasted.show('Tạo tempate thành công', {
+                    this.$toasted.show('Cập nhật tempate thành công', {
                         theme: 'outline',
                         position: 'top-right',
                         type: 'success',
@@ -228,15 +257,59 @@ export default {
                     this.prompt = '';
                     this.description = 0;
                     this.maxTokens = 1024;
+                    setTimeout(() => {
+                        this.$router.go();
+                    }, 1000);
                 })
                 .catch((error) => {
-                    this.$toasted.show('Tạo template thất bại', {
+                    console.log(JSON.stringify(error));
+                    this.$toasted.show('Cập nhật template thất bại', {
                         theme: 'outline',
                         position: 'top-right',
                         type: 'error',
                         duration: 2000,
                     });
                 });
+        },
+        async getPutPresignedURL() {
+            const requestOptions = {
+                method: 'GET',
+                headers: {
+                    Authorization: this.$store.state.authentication.user.accessToken,
+                    'Content-Type': 'application/json',
+                },
+            };
+            const presignedURLRequest = await fetch(
+                `${baseURL}/smart-content/template/presigned-image-upload`,
+                requestOptions
+            );
+            const presignedURLResponse = await presignedURLRequest.json();
+            console.log(presignedURLResponse);
+            this.putFilePresignedURL = presignedURLResponse['url'];
+            this.filename = presignedURLResponse['fileId'];
+        },
+        async getDetailTemplate() {
+            const requestOptions = {
+                method: 'GET',
+                headers: {
+                    Authorization: this.$store.state.authentication.user.accessToken,
+                    'Content-Type': 'application/json',
+                },
+            };
+            const detailTemplateRequest = await fetch(
+                `${baseURL}/smart-content/template/${this.templateId}`,
+                requestOptions
+            );
+            const detailTemplateResponse = await detailTemplateRequest.json();
+            console.log(detailTemplateResponse);
+            this.displayName = detailTemplateResponse['data'].displayName;
+            this.prompt = detailTemplateResponse['data'].prompt;
+            this.description = detailTemplateResponse['data'].description;
+            this.temperature = detailTemplateResponse['data'].temperature;
+            this.topP = detailTemplateResponse['data'].topP;
+            this.frequencyPenalty = detailTemplateResponse['data'].frequencyPenalty;
+            this.maxTokens = detailTemplateResponse['data'].maxTokens;
+            this.presencePenalty = detailTemplateResponse['data'].presencePenalty;
         },
     },
 };

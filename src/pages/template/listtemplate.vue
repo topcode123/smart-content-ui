@@ -2,7 +2,7 @@
     <div>
         <Breadcrumbs
             main="Smart Content"
-            title="Tạo template"
+            title="Danh sách template"
         />
 
         <div class="container-fluid">
@@ -452,19 +452,20 @@
     </div>
 </template>
 <script>
+import { baseURL } from '../../constants/config';
 export default {
     name: 'ListTemplate',
     data() {
         return {
             listTemplate: [],
-            role: ""
+            role: '',
         };
     },
 
     computed: {},
     mounted() {
         this.getListTemplate();
-        this.role = this.$store.state.authentication?.user.role
+        this.role = this.$store.state.authentication?.user.role;
         console.log(this.role);
     },
     methods: {
@@ -472,35 +473,20 @@ export default {
             var images = require.context('../../assets/images/faq/', false, /\.jpg$/);
             return images('./' + filename);
         },
-        getListTemplate() {
-            // axios fetch content
-            const listTemplate = {
-                data: [
-                    {
-                        id: '63d8cec85d900176f84b8371',
-                        displayName: 'Kịch bản quảng cáo FB',
-                        descriptions: 'Chủ trường mần non',
-                    },
-                    {
-                        id: '63d91f9e5d900176f84b8374',
-                        displayName: 'Kiểm tra chất lượng nội dung',
-                        descriptions: 'Đánh giá chất lượng nội dung của 1 bài viết',
-                    },
-                    {
-                        id: '63db3b995d900176f84b837d',
-                        displayName: 'Thông tin sản phẩm từ 1 url',
-                        descriptions: 'Mô tả thông tin chi tiết sản phẩm',
-                    },
-                    {
-                        id: '63db77635d900176f84b8380',
-                        displayName: 'Viết lại bài từ 1 url',
-                        descriptions: 'Viết lại bài viết từ 1 url',
-                    },
-                ],
+        async getListTemplate() {
+            const requestOptions = {
+                method: 'GET',
+                headers: {
+                    Authorization: this.$store.state.authentication.user.accessToken,
+                    'Content-Type': 'application/json',
+                },
             };
-            this.listTemplate = listTemplate['data'];
+            const listTemplateRequest = await fetch(`${baseURL}/smart-content/list-template`, requestOptions);
+            const listTemplateResponse= await listTemplateRequest.json();
+            console.log(listTemplateResponse)
+            
+            this.listTemplate = listTemplateResponse['data'];
         },
-        
     },
 };
 </script>

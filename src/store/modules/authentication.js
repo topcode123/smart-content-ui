@@ -20,7 +20,7 @@ export const authentication = {
                 .then(
                     user => {
                         commit('loginSuccess', user);
-                        router.push('/');
+                        router.push('/smart-content/list-template');
                     },
                     error => {
                         commit('loginFailure', error);
