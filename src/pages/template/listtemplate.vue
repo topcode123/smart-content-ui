@@ -58,27 +58,36 @@
                                 <div class="blog-box blog-grid text-center product-box">
                                     <div class="product-img">
                                         <img
-                                            class="img-fluid top-radius-blog"
-                                            :src="getImgUrl('1.jpg')"
+                                            class="img-fluid top-radius-blog img-thumbnail"
+                                            :src="template.url"
                                             alt=""
+                                            @error="handleLoadImageError"
                                         />
                                         <div class="product-hover">
-                                            <ul>
-                                                <li v-if="role === 'admin'">
+                                            <ul v-if="role === 'admin'">
+                                                <li>
                                                     <router-link
                                                         :to="{ name: 'Detail Template', params: { id: template.id } }"
                                                     >
                                                         <i class="icon-link"></i>
                                                     </router-link>
                                                 </li>
-                                                <li v-else>
+
+                                                <li>
+                                                    <i
+                                                        class="icon-trash"
+                                                        @click="handleDeleteTemplate(template.id)"
+                                                    ></i>
+                                                </li>
+                                            </ul>
+                                            <ul v-else>
+                                                <li>
                                                     <router-link
                                                         :to="{ name: 'Use Template', params: { id: template.id } }"
                                                     >
                                                         <i class="icon-link"></i>
                                                     </router-link>
                                                 </li>
-                                                <!-- <li><i class="icon-import"></i></li> -->
                                             </ul>
                                         </div>
                                     </div>
@@ -466,7 +475,6 @@ export default {
     mounted() {
         this.getListTemplate();
         this.role = this.$store.state.authentication?.user.role;
-        console.log(this.role);
     },
     methods: {
         getImgUrl(filename) {
@@ -482,11 +490,50 @@ export default {
                 },
             };
             const listTemplateRequest = await fetch(`${baseURL}/smart-content/list-template`, requestOptions);
-            const listTemplateResponse= await listTemplateRequest.json();
-            console.log(listTemplateResponse)
-            
+            const listTemplateResponse = await listTemplateRequest.json();
+            console.log(listTemplateResponse);
+
             this.listTemplate = listTemplateResponse['data'];
         },
+        handleLoadImageError(event) {
+            var images = require.context('../../assets/images/faq/', false, /\.jpg$/);
+            event.target.src = images('./default-thumbnail.jpg');
+        },
+        handleDeleteTemplate(templateId) {
+            const requestOptions = {
+                method: 'DELETE',
+                headers: {
+                    Authorization: this.$store.state.authentication.user.accessToken,
+                    'Content-Type': 'application/json',
+                },
+            };
+
+            fetch(`${baseURL}/smart-content/template/${templateId}`, requestOptions)
+                .then((response) => {
+                    this.$toasted.show('Xoá tempate thành công', {
+                        theme: 'outline',
+                        position: 'top-right',
+                        type: 'success',
+                        duration: 2000,
+                    });
+                    this.getListTemplate();
+                })
+                .catch((error) => {
+                    console.log(JSON.stringify(error));
+                    this.$toasted.show('Xoá template thất bại', {
+                        theme: 'outline',
+                        position: 'top-right',
+                        type: 'error',
+                        duration: 2000,
+                    });
+                });
+        }
     },
 };
 </script>
+<style scoped>
+.img-thumbnail {
+    width: 412px;
+    height: 310px;
+}
+</style>

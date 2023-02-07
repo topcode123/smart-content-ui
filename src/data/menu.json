@@ -11,6 +11,7 @@
                 {
                     "path": "/smart-content/create-template",
                     "title": "Tạo template",
+                    "role": "admin",
                     "type": "link"
                 },
                 {

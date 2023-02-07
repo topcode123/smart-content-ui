@@ -192,18 +192,11 @@ export default {
     methods: {
         handleChangeFileUpload(event) {
             this.templateImage = event.target.files[0];
-            
         },
         async handleCreateTemplate(event) {
             event.preventDefault();
 
-            if (
-                !this.displayName ||
-                !this.prompt ||
-                !this.description ||
-                !this.temperature ||
-                !this.maxTokens
-            ) {
+            if (!this.displayName || !this.prompt || !this.description || !this.temperature || !this.maxTokens) {
                 this.$toasted.show('Các trường không được để trống', {
                     theme: 'outline',
                     position: 'top-right',
@@ -213,48 +206,38 @@ export default {
 
                 return;
             }
-            
-            let binaryImage = null
-            // let reader = new FileReader();
-            // reader.onload(function (e) {
-                
-            //     binaryImage = e.target.result;
-            // });
-
-            // reader.readAsDataURL(this.templateImage);
 
             const uploadFileOptions = {
                 method: 'PUT',
                 headers: {
-                    "Content-Type": "image/jpeg"
+                    'Content-Type': 'image/jpeg',
                 },
-                body: binaryImage,
+                body: this.templateImage,
                 redirect: 'follow',
-            };
-
-            const template = {
-                displayName: this.displayName,
-                prompt: this.prompt,
-                descriptions: this.description,
-                temperature: this.temperature,
-                maxTokens: this.maxTokens,
-                topP: this.topP,
-                frequencyPenalty: this.frequencyPenalty,
-                presencePenalty: this.presencePenalty,
-                filename: this.filename,
-            };
-
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                    Authorization: this.$store.state.authentication.user.accessToken,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(template),
             };
 
             await fetch(this.putFilePresignedURL, uploadFileOptions)
                 .then((response) => {
+                    const template = {
+                        displayName: this.displayName,
+                        prompt: this.prompt,
+                        descriptions: this.description,
+                        temperature: this.temperature,
+                        maxTokens: this.maxTokens,
+                        topP: this.topP,
+                        frequencyPenalty: this.frequencyPenalty,
+                        presencePenalty: this.presencePenalty,
+                        filename: this.filename,
+                    };
+
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: {
+                            Authorization: this.$store.state.authentication.user.accessToken,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(template),
+                    };
                     fetch(`${baseURL}/smart-content/template`, requestOptions)
                         .then((response) => {
                             this.$toasted.show('Tạo tempate thành công', {

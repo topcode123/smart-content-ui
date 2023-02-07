@@ -206,24 +206,32 @@ export default {
                 return;
             }
 
-            let binaryImage = null;
-            // let reader = new FileReader();
-            // reader.onload(function (e) {
-
-            //     binaryImage = e.target.result;
-            // });
-
-            // reader.readAsDataURL(this.templateImage);
-
             const uploadFileOptions = {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'image/jpeg',
                 },
-                body: binaryImage,
+                body: this.templateImage,
                 redirect: 'follow',
             };
-
+            if (this.templateImage) {
+                await fetch(this.putFilePresignedURL, uploadFileOptions)
+                    .then((_) => {
+                        this.updateTemplate();
+                    })
+                    .catch((_) => {
+                        this.$toasted.show('Cập nhật template thất bại', {
+                            theme: 'outline',
+                            position: 'top-right',
+                            type: 'error',
+                            duration: 2000,
+                        });
+                    });
+            } else {
+                this.updateTemplate();
+            }
+        },
+        updateTemplate() {
             const template = {
                 displayName: this.displayName,
                 prompt: this.prompt,
@@ -244,7 +252,6 @@ export default {
                 },
                 body: JSON.stringify(template),
             };
-
             fetch(`${baseURL}/smart-content/template/${this.templateId}`, requestOptions)
                 .then((response) => {
                     this.$toasted.show('Cập nhật tempate thành công', {

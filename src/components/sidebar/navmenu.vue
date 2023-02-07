@@ -351,9 +351,6 @@ export default {
             }
         },
     },
-    mounted() {
-       
-    },
     created() {
         window.addEventListener('resize', this.handleResize);
         this.handleResize();
@@ -376,16 +373,26 @@ export default {
     },
     mounted() {
         this.menuItems.filter((items) => {
-            if (items.path === this.$route.path) this.$store.dispatch('menu/setActiveRoute', items);
-            if (!items.children) return false;
+            if (items.path === this.$route.path) {
+                this.$store.dispatch('menu/setActiveRoute', items);
+            }
+            if (!items.children) {
+                return false;
+            }
             items.children.filter((subItems) => {
                 if (subItems.path === this.$route.path) this.$store.dispatch('menu/setActiveRoute', subItems);
-                if (!subItems.children) return false;
+                if (!subItems.children) {
+                    return false;
+                }
                 subItems.children.filter((subSubItems) => {
-                    if (subSubItems.path === this.$route.path) this.$store.dispatch('menu/setActiveRoute', subSubItems);
+                    if (subSubItems.path === this.$route.path) {
+                        this.$store.dispatch('menu/setActiveRoute', subSubItems);
+                    }
                 });
             });
         });
+        const role = this.$store.state.authentication?.user.role;
+        this.$store.dispatch('menu/updateRouteByRole', role);
     },
     methods: {
         handleScroll() {
