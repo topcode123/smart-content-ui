@@ -216,8 +216,8 @@ export default {
                 redirect: 'follow',
             };
 
-            await fetch(this.putFilePresignedURL, uploadFileOptions)
-                .then((response) => {
+            // await fetch(this.putFilePresignedURL, uploadFileOptions)
+            //     .then((response) => {
                     const template = {
                         displayName: this.displayName,
                         prompt: this.prompt,
@@ -263,16 +263,16 @@ export default {
                                 duration: 2000,
                             });
                         });
-                })
-                .catch((error) => {
-                    console.log(JSON.stringify(error));
-                    this.$toasted.show('Tạo template thất bại', {
-                        theme: 'outline',
-                        position: 'top-right',
-                        type: 'error',
-                        duration: 2000,
-                    });
-                });
+                // })
+                // .catch((error) => {
+                //     console.log(JSON.stringify(error));
+                //     this.$toasted.show('Tạo template thất bại', {
+                //         theme: 'outline',
+                //         position: 'top-right',
+                //         type: 'error',
+                //         duration: 2000,
+                //     });
+                // });
         },
         async getPutPresignedURL() {
             const requestOptions = {
