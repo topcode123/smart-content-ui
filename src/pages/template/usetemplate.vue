@@ -19,9 +19,14 @@
                                 <b-form-input
                                     type="text"
                                     class="field-value"
-                                ></b-form-input>
+                                    :data-fieldname="field"
+                                >
+                                </b-form-input>
                             </div>
-                            <div class="form-group">
+                            <div
+                                class="form-group"
+                                v-show="false"
+                            >
                                 <label>Phong cách:</label>
                                 <b-form-select
                                     v-model="selectedStyle"
@@ -29,7 +34,10 @@
                                 >
                                 </b-form-select>
                             </div>
-                            <div class="form-group">
+                            <div
+                                class="form-group"
+                                v-show="false"
+                            >
                                 <label>Ngôn ngữ:</label>
                                 <b-form-select
                                     v-model="selectedLanguage"
@@ -55,7 +63,7 @@
                             <p class="card-title">{{ displayName }}</p>
                             <ckeditor
                                 :editor="editor"
-                                v-model="postContent"
+                                :value="postContent"
                             >
                             </ckeditor>
                         </div>
@@ -71,6 +79,11 @@ import 'vue2-dropzone/dist/vue2Dropzone.min.css';
 import CKEditor from '@ckeditor/ckeditor5-vue';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { baseURL } from '../../constants/config';
+import { Configuration, OpenAIApi } from 'openai';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
+
+const ListLanguageName = ['NGÔN NGỮ', 'NGONNGU', 'LANGUAGE'];
+const ListStyle = ['VĂN PHONG', 'PHONG CÁCH', 'PHONGCACH', 'STYLE'];
 
 export default {
     name: 'UseTemplate',
@@ -100,6 +113,8 @@ export default {
             templateImage: null,
             listField: [],
             articleId: '',
+            openaiToken: '',
+            countSentence: 0,
         };
     },
     mounted() {
@@ -173,6 +188,12 @@ export default {
                 duration: 2000,
             });
         },
+        isExistLangageSelect() {
+            return this.listField.some((field) => ListLanguageName.includes(field.toUpperCase()));
+        },
+        isExistStyleSelect() {
+            return this.listField.some((field) => ListLanguageName.includes(field.toUpperCase()));
+        },
         async getTemplateDetail() {
             const requestOptions = {
                 method: 'GET',
@@ -197,10 +218,11 @@ export default {
             this.maxTokens = detailTemplateResponse.maxTokens;
             this.presencePenalty = detailTemplateResponse.presencePenalty;
             this.listField = [...detailTemplateResponse.listField];
+            this.openaiToken = detailTemplateResponse.openaiToken;
         },
         async handleGenerateContent(event) {
             event.preventDefault();
-            
+
             const listFieldValueElement = document.querySelectorAll('.field-value');
             let listFieldValue = [];
             let isAnyEmptyField = false;
@@ -208,9 +230,13 @@ export default {
                 if (element.value.trim() === '') {
                     isAnyEmptyField = true;
                 }
-                listFieldValue.push(element.value);
+                this.prompt = this.prompt.replace(`[${element.dataset.fieldname}]`, element.value);
+                listFieldValue.push({
+                    key: element.dataset.fieldname,
+                    value: element.value,
+                });
             }
-
+            console.log(listFieldValue);
             if (isAnyEmptyField) {
                 this.$toasted.show('Vui lòng nhập đầy đủ dữ liệu', {
                     theme: 'outline',
@@ -220,30 +246,118 @@ export default {
                 });
                 return;
             }
-            const style = this.listStyle[this.selectedStyle]?.text || "";
-            const createContentRequest = {
-                articleId: this.articleId,
-                listField: listFieldValue,
-                templateId: this.templateId,
-                style: style,
-            };
+            console.log(this.prompt);
+            this.openAIFetchAPI();
+            // const style = this.listStyle[this.selectedStyle]?.text || '';
+            // const createContentRequest = {
+            //     articleId: this.articleId,
+            //     listField: listFieldValue,
+            //     templateId: this.templateId,
+            //     style: style,
+            // };
 
-            const requestOptions = {
+            // const requestOptions = {
+            //     method: 'POST',
+            //     headers: {
+            //         Authorization: this.$store.state.authentication.user.accessToken,
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(createContentRequest),
+            // };
+            // this.$swal.showLoading();
+            // const generateContentRequest = await fetch(`${baseURL}/smart-content/generate-article`, requestOptions);
+
+            // const generateContentResponse = await generateContentRequest.json();
+
+            // console.log(generateContentResponse);
+            // this.postContent = generateContentResponse['content'];
+            // this.$swal('Thành công');
+        },
+        async openAIFetchAPI() {
+            // const configuration = new Configuration({
+            //     apiKey: apiKey,
+            // });
+
+            // const openai = new OpenAIApi(configuration);
+
+            // const completion = await openai.createCompletion(
+            //     {
+            //         model: 'text-davinci-003',
+            //         prompt: prompt,
+            //         max_tokens: 1000,
+            //         stream: true,
+            //     },
+            //     { responseType: 'stream' }
+            // );
+            // console.log(completion)
+            // completion.on('data', console.log);
+            const respone = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
                 method: 'POST',
                 headers: {
-                    Authorization: this.$store.state.authentication.user.accessToken,
+                    accept: 'text/event-stream',
+                    authorization: `Bearer ${this.openaiToken}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(createContentRequest),
-            };
-            this.$swal.showLoading();
-            const generateContentRequest = await fetch(`${baseURL}/smart-content/generate-article`, requestOptions);
+                body: JSON.stringify({
+                    prompt: this.prompt,
+                    max_tokens: this.maxTokens,
+                    temperature: 0.5,
+                    top_p: 1,
+                    frequency_penalty: 0,
+                    presence_penalty: 0,
+                    best_of: 1,
+                    echo: true,
+                    logprobs: 0,
+                    stream: true,
+                }),
+            });
 
-            const generateContentResponse = await generateContentRequest.json();
+            const rersult = respone.body.pipeThrough(new TextDecoderStream()).pipeThrough(this.splitStream('\n'));
+            this.writeToDOM(rersult.getReader());
+        },
+        splitStream(splitOn) {
+            let buffer = '';
+            return new TransformStream({
+                transform(chunk, controller) {
+                    buffer += chunk;
+                    const parts = buffer.split(splitOn);
+                    parts.slice(0, -1).forEach((part) => controller.enqueue(part));
+                    buffer = parts[parts.length - 1];
+                },
+                flush(controller) {
+                    if (buffer) {
+                        controller.enqueue(buffer);
+                    }
+                },
+            });
+        },
+        writeToDOM(reader) {
+            reader.read().then(
+                ({ value, done }) => {
+                    if (done) {
+                        console.log('The stream was already closed!');
+                    } else {
+                        if (value) {
+                            if (this.countSentence === 0) {
+                                this.countSentence += 1;
+                            } else {
+                                const chunkData = JSON.parse(
+                                    value.replace('data:', '').replace('data: [DONE]', '').trim()
+                                );
+                                if (chunkData.choices[0].text === '\n') {
+                                    this.postContent = this.postContent + '<br/>';
+                                } else {
+                                    this.postContent = this.postContent + chunkData.choices[0].text;
+                                }
+                            }
+                        }
 
-            console.log(generateContentResponse);
-            this.postContent = generateContentResponse['content'];
-            this.$swal("Thành công");
+                        // Recursively call
+                        this.writeToDOM(reader);
+                    }
+                },
+                (e) => console.error('The stream became errored and cannot be read from!', e)
+            );
         },
     },
 };

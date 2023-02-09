@@ -114,11 +114,12 @@ const mutations = {
         });
     },
     updateRouteByRole: (state, role) => {
+        console.log(role)
         if (role === 'user') {
             state.data = state.data.filter((menuItem) => {
                 if (menuItem.children) {
                     menuItem.children = menuItem.children.filter((submenuItems) => {
-                        return submenuItems?.role !== 'admin';
+                        return submenuItems?.role === 'user';
                     });
                 }
                 return true;

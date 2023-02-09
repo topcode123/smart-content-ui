@@ -56,3 +56,5 @@ yarn-error.log
 **/IntegrationServer/packages/Wm*/
 
 # End of https://www.toptal.com/developers/gitignore/api/webmethods,visualstudiocode,vuejs,vue
+
+.DS_Store

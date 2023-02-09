@@ -80,7 +80,8 @@
                     <feather
                         :type="menuItem.icon"
                         class="top"
-                    ></feather>
+                    >
+                    </feather>
                     <span>
                         {{ $t(menuItem.title) }}
                     </span>
@@ -99,14 +100,16 @@
                     <feather
                         :type="menuItem.icon"
                         class="top"
-                    ></feather>
+                    >
+                    </feather>
                     <span>
                         {{ $t(menuItem.title) }}
                     </span>
                     <i
                         class="fa fa-angle-right pull-right"
                         v-if="menuItem.children"
-                    ></i>
+                    >
+                    </i>
                 </a>
                 <!-- External Tab Link -->
                 <a
@@ -138,7 +141,8 @@
                         v-for="(childrenItem, index) in menuItem.children"
                         :key="index"
                         :class="{ active: childrenItem.active }"
-                    >
+                        v-show="childrenItem.role.includes(role)"
+                    >   
                         <!-- Sub -->
                         <a
                             class="submenu-title"
@@ -293,6 +297,7 @@ export default {
     data() {
         return {
             layoutobj: {},
+            role: ""
         };
     },
 
@@ -372,6 +377,7 @@ export default {
         window.removeEventListener('resize', this.handleResize);
     },
     mounted() {
+        this.role = this.$store.state.authentication?.user.role;
         this.menuItems.filter((items) => {
             if (items.path === this.$route.path) {
                 this.$store.dispatch('menu/setActiveRoute', items);
@@ -380,7 +386,9 @@ export default {
                 return false;
             }
             items.children.filter((subItems) => {
-                if (subItems.path === this.$route.path) this.$store.dispatch('menu/setActiveRoute', subItems);
+                if (subItems.path === this.$route.path) {
+                    this.$store.dispatch('menu/setActiveRoute', subItems);
+                }
                 if (!subItems.children) {
                     return false;
                 }
@@ -391,8 +399,8 @@ export default {
                 });
             });
         });
-        const role = this.$store.state.authentication?.user.role;
-        this.$store.dispatch('menu/updateRouteByRole', role);
+
+        // this.$store.dispatch('menu/updateRouteByRole', role);
     },
     methods: {
         handleScroll() {
