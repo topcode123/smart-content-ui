@@ -223,7 +223,7 @@ import HoverEffect from '../pages/gallery/hover-effect';
 Vue.use(Router);
 
 const routes = [
-    { path: '', redirect: { name: 'default' } },
+    { path: '', redirect: { name: 'list-template' } },
     {
         path: '/dashboard',
         component: Body,

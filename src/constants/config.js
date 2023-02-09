@@ -4,4 +4,4 @@ export const localeOptions = [
     { id: 'es', name: 'Español', icon: 'flag-icon-es' },
 ];
 // export const baseURL = 'http://94.237.76.12:8090';
-export const baseURL = 'https://smartcontent.momd.vn/smart-content';
+export const baseURL = 'https://smartcontent.momd.vn/api';
