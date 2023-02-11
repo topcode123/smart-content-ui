@@ -185,7 +185,6 @@ export default {
     },
     mounted() {
         this.templateId = this.$route.params?.id;
-        this.getPutPresignedURL();
         this.getDetailTemplate();
     },
     methods: {
@@ -276,23 +275,7 @@ export default {
                     });
                 });
         },
-        async getPutPresignedURL() {
-            const requestOptions = {
-                method: 'GET',
-                headers: {
-                    Authorization: this.$store.state.authentication.user.accessToken,
-                    'Content-Type': 'application/json',
-                },
-            };
-            const presignedURLRequest = await fetch(
-                `${baseURL}/smart-content/template/presigned-image-upload`,
-                requestOptions
-            );
-            const presignedURLResponse = await presignedURLRequest.json();
-            console.log(presignedURLResponse);
-            this.putFilePresignedURL = presignedURLResponse['url'];
-            this.filename = presignedURLResponse['fileId'];
-        },
+        
         async getDetailTemplate() {
             const requestOptions = {
                 method: 'GET',
