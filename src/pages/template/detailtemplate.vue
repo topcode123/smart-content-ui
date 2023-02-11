@@ -232,25 +232,23 @@ export default {
             }
         },
         updateTemplate() {
-            const template = {
-                displayName: this.displayName,
-                prompt: this.prompt,
-                descriptions: this.description,
-                temperature: this.temperature,
-                maxTokens: this.maxTokens,
-                topP: this.topP,
-                frequencyPenalty: this.frequencyPenalty,
-                presencePenalty: this.presencePenalty,
-                filename: this.filename,
-            };
+            let formDataUpdateTemplate = new FormData();
+            formDataUpdateTemplate.append('displayName', this.displayName);
+            formDataUpdateTemplate.append('prompt', this.prompt);
+            formDataUpdateTemplate.append('description', this.description);
+            formDataUpdateTemplate.append('temperature', this.temperature);
+            formDataUpdateTemplate.append('maxTokens', this.maxTokens);
+            formDataUpdateTemplate.append('topP', this.topP);
+            formDataUpdateTemplate.append('frequencyPenalty', this.frequencyPenalty);
+            formDataUpdateTemplate.append('presencePenalty', this.presencePenalty);
+            formDataUpdateTemplate.append('templateImage', this.templateImage);
 
             const requestOptions = {
                 method: 'PUT',
                 headers: {
                     Authorization: this.$store.state.authentication.user.accessToken,
-                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(template),
+                body: formDataUpdateTemplate,
             };
             fetch(`${baseURL}/smart-content/template/${this.templateId}`, requestOptions)
                 .then((response) => {
@@ -264,9 +262,9 @@ export default {
                     this.prompt = '';
                     this.description = 0;
                     this.maxTokens = 1024;
-                    setTimeout(() => {
-                        this.$router.go();
-                    }, 1000);
+                    // setTimeout(() => {
+                    //     this.$router.go();
+                    // }, 1000);
                 })
                 .catch((error) => {
                     console.log(JSON.stringify(error));

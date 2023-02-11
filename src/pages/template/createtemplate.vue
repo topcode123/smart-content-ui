@@ -207,36 +207,26 @@ export default {
                 return;
             }
 
-            const uploadFileOptions = {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'image/jpeg',
-                },
-                body: this.templateImage,
-                redirect: 'follow',
-            };
+            let formDataCreateTemplate = new FormData();
+            formDataCreateTemplate.append('displayName', this.displayName);
+            formDataCreateTemplate.append('prompt', this.prompt);
+            formDataCreateTemplate.append('description', this.description);
+            formDataCreateTemplate.append('temperature', this.temperature);
+            formDataCreateTemplate.append('maxTokens', this.maxTokens);
+            formDataCreateTemplate.append('topP', this.topP);
+            formDataCreateTemplate.append('frequencyPenalty', this.frequencyPenalty);
+            formDataCreateTemplate.append('presencePenalty', this.presencePenalty);
+            formDataCreateTemplate.append('templateImage', this.templateImage);
 
-            // await fetch(this.putFilePresignedURL, uploadFileOptions)
-            //     .then((response) => {
-            const template = {
-                displayName: this.displayName,
-                prompt: this.prompt,
-                descriptions: this.description,
-                temperature: this.temperature,
-                maxTokens: this.maxTokens,
-                topP: this.topP,
-                frequencyPenalty: this.frequencyPenalty,
-                presencePenalty: this.presencePenalty,
-                filename: this.filename,
-            };
+            
 
             const requestOptions = {
                 method: 'POST',
                 headers: {
                     Authorization: this.$store.state.authentication.user.accessToken,
-                    'Content-Type': 'application/json',
+                    
                 },
-                body: JSON.stringify(template),
+                body: formDataCreateTemplate,
             };
             fetch(`${baseURL}/smart-content/template`, requestOptions)
                 .then((response) => {
@@ -263,16 +253,6 @@ export default {
                         duration: 2000,
                     });
                 });
-            // })
-            // .catch((error) => {
-            //     console.log(JSON.stringify(error));
-            //     this.$toasted.show('Tạo template thất bại', {
-            //         theme: 'outline',
-            //         position: 'top-right',
-            //         type: 'error',
-            //         duration: 2000,
-            //     });
-            // });
         },
         async getPutPresignedURL() {
             const requestOptions = {
@@ -291,7 +271,6 @@ export default {
             this.putFilePresignedURL = presignedURLResponse['url'];
             this.filename = presignedURLResponse['fileId'];
         },
-        
     },
 };
 </script>

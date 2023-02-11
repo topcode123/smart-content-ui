@@ -7,7 +7,7 @@
         <!-- Container-fluid starts-->
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="card">
                         <div class="card-body">
                             <div
@@ -16,12 +16,12 @@
                                 :key="index"
                             >
                                 <label>{{ field }}:</label>
-                                <b-form-input
-                                    type="text"
+                                <b-form-textarea
+                                    rows="3"
                                     class="field-value"
                                     :data-fieldname="field"
                                 >
-                                </b-form-input>
+                                </b-form-textarea>
                             </div>
                             <div
                                 class="form-group"
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-8">
                     <div class="card">
                         <div class="card-body">
                             <p class="card-title">{{ displayName }}</p>

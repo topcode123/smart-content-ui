@@ -55,11 +55,14 @@
                             :key="'normal' + index"
                         >
                             <div class="card">
+                                <div class="card-header p-2">
+                                    <h6>{{ template.displayName }}</h6>
+                                </div>
                                 <div class="blog-box blog-grid text-center product-box">
                                     <div class="product-img">
                                         <img
                                             class="img-fluid top-radius-blog img-thumbnail"
-                                            :src="template.url"
+                                            :src="getImgUrl(template.url)"
                                             alt=""
                                             @error="handleLoadImageError"
                                         />
@@ -91,7 +94,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="blog-details-main">
+                                    <div class="blog-details-main p-1">
                                         <!-- <ul class="blog-social">
                                             <li
                                                 class="digits"
@@ -107,10 +110,13 @@
                                             ></li>
                                         </ul> -->
                                         <hr />
-                                        <h6
-                                            class="blog-bottom-details"
-                                            v-text="template.displayName"
-                                        ></h6>
+                                        <router-link
+                                            class="btn btn-link btn-sm mb-2"
+                                            v-if="role === 'user'"
+                                            :to="{ name: 'Use Template', params: { id: template.id } }"
+                                        >
+                                            Tạo content
+                                        </router-link>
                                     </div>
                                 </div>
                             </div>
@@ -478,8 +484,7 @@ export default {
     },
     methods: {
         getImgUrl(filename) {
-            var images = require.context('../../assets/images/faq/', false, /\.jpg$/);
-            return images('./' + filename);
+            return `${baseURL}/${filename}`;
         },
         async getListTemplate() {
             const requestOptions = {
@@ -527,7 +532,7 @@ export default {
                         duration: 2000,
                     });
                 });
-        }
+        },
     },
 };
 </script>
