@@ -216,15 +216,15 @@ export default {
             formDataCreateTemplate.append('topP', this.topP);
             formDataCreateTemplate.append('frequencyPenalty', this.frequencyPenalty);
             formDataCreateTemplate.append('presencePenalty', this.presencePenalty);
-            formDataCreateTemplate.append('templateImage', this.templateImage);
 
-            
+            if (this.templateImage) {
+                formDataCreateTemplate.append('templateImage', this.templateImage);
+            }
 
             const requestOptions = {
                 method: 'POST',
                 headers: {
                     Authorization: this.$store.state.authentication.user.accessToken,
-                    
                 },
                 body: formDataCreateTemplate,
             };
@@ -240,9 +240,9 @@ export default {
                     this.prompt = '';
                     this.description = 0;
                     this.maxTokens = 1024;
-                    setTimeout(() => {
-                        this.$router.go();
-                    }, 1000);
+                    // setTimeout(() => {
+                    //     this.$router.go();
+                    // }, 1000);
                 })
                 .catch((error) => {
                     console.log(JSON.stringify(error));

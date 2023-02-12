@@ -240,7 +240,9 @@ export default {
             formDataUpdateTemplate.append('topP', this.topP);
             formDataUpdateTemplate.append('frequencyPenalty', this.frequencyPenalty);
             formDataUpdateTemplate.append('presencePenalty', this.presencePenalty);
-            formDataUpdateTemplate.append('templateImage', this.templateImage);
+            if (this.templateImage) {
+                formDataUpdateTemplate.append('templateImage', this.templateImage);
+            }
 
             const requestOptions = {
                 method: 'PUT',
