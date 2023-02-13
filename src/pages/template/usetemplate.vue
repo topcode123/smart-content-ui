@@ -230,7 +230,7 @@ export default {
                 if (element.value.trim() === '') {
                     isAnyEmptyField = true;
                 }
-                this.prompt = this.prompt.replace(`[${element.dataset.fieldname}]`, element.value);
+                this.prompt = this.prompt.replaceAll(`[${element.dataset.fieldname}]`, element.value);
                 listFieldValue.push({
                     key: element.dataset.fieldname,
                     value: element.value,
