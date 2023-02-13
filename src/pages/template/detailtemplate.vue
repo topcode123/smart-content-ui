@@ -259,10 +259,6 @@ export default {
                         type: 'success',
                         duration: 2000,
                     });
-                    this.displayName = '';
-                    this.prompt = '';
-                    this.description = 0;
-                    this.maxTokens = 1024;
                     // setTimeout(() => {
                     //     this.$router.go();
                     // }, 1000);
