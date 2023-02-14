@@ -55,19 +55,19 @@
                             :key="'normal' + index"
                         >
                             <div class="card">
-                                <div class="card-header p-2">
+                                <div class="card-header display-name">
                                     <h6>{{ template.displayName }}</h6>
                                 </div>
                                 <div class="blog-box blog-grid text-center product-box">
                                     <div class="product-img">
                                         <img
-                                            class="img-fluid top-radius-blog img-thumbnail"
+                                            class="template-thumbnail"
                                             :src="getImgUrl(template.url)"
                                             alt=""
                                             @error="handleLoadImageError"
                                         />
-                                        <div class="product-hover">
-                                            <ul v-if="role === 'admin'">
+                                        <div class="product-hover"  v-if="role === 'admin'">
+                                            <ul>
                                                 <li>
                                                     <router-link
                                                         :to="{ name: 'Detail Template', params: { id: template.id } }"
@@ -83,7 +83,7 @@
                                                     ></i>
                                                 </li>
                                             </ul>
-                                            <ul v-else>
+                                            <!-- <ul v-else>
                                                 <li>
                                                     <router-link
                                                         :to="{ name: 'Use Template', params: { id: template.id } }"
@@ -91,7 +91,7 @@
                                                         <i class="icon-link"></i>
                                                     </router-link>
                                                 </li>
-                                            </ul>
+                                            </ul> -->
                                         </div>
                                     </div>
                                     <div class="blog-details-main p-1">
@@ -111,7 +111,7 @@
                                         </ul> -->
                                         <hr />
                                         <router-link
-                                            class="btn btn-link btn-sm mb-2"
+                                            class="btn btn-primary btn-sm mb-2"
                                             v-if="role === 'user'"
                                             :to="{ name: 'Use Template', params: { id: template.id } }"
                                         >
@@ -537,8 +537,13 @@ export default {
 };
 </script>
 <style scoped>
-.img-thumbnail {
-    width: 412px;
+.template-thumbnail {
+    width: 100%;
     height: 310px;
+}
+
+.display-name {
+    padding: 20px;
+    text-align: center;
 }
 </style>
