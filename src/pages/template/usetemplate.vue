@@ -20,6 +20,7 @@
                                     rows="3"
                                     class="field-value"
                                     :data-fieldname="field"
+                                    maxlength="200"
                                 >
                                 </b-form-textarea>
                             </div>
