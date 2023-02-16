@@ -36,7 +36,6 @@
                 </div>
                 <Footer />
             </div>
-            <Customizer />
             <TapTop />
         </div>
     </div>
@@ -48,7 +47,6 @@ import { layoutClasses } from '../constants/layout';
 import Header from './header';
 import Sidebar from './sidebar';
 import Footer from './footer';
-import Customizer from './customizer';
 import TapTop from './taptop';
 
 export default {
@@ -58,7 +56,6 @@ export default {
         Header,
         Sidebar,
         Footer,
-        Customizer,
         TapTop,
     },
     data() {

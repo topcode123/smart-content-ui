@@ -16,15 +16,6 @@
                 <a href="#"><feather type="user"></feather><span>Account </span></a>
             </li>
             <li>
-                <a href="#"><feather type="mail"></feather><span>Inbox</span></a>
-            </li>
-            <li>
-                <a href="#"><feather type="file-text"></feather><span>Taskboard</span></a>
-            </li>
-            <li>
-                <a href="#"><feather type="settings"></feather><span>Settings</span></a>
-            </li>
-            <li>
                 <a @click="logout"><feather type="log-in"></feather><span>Log out</span></a>
             </li>
         </ul>

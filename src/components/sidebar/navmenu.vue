@@ -36,6 +36,7 @@
                 :key="index"
                 :class="{ active: menuItem.active, 'sidebar-main-title': menuItem.type == 'headtitle' }"
                 class="sidebar-list"
+                v-show="menuItem.role.includes(role)"
             >
                 <!-- link title -->
                 <div v-if="menuItem.type == 'headtitle'">
@@ -46,8 +47,9 @@
                 <label
                     :class="'badge badge-' + menuItem.badgeType"
                     v-if="menuItem.badgeType"
-                    >{{ $t(menuItem.badgeValue) }}</label
                 >
+                    {{ $t(menuItem.badgeValue) }}
+                </label>
                 <a
                     href="javascript:void(0)"
                     class="sidebar-link sidebar-title"
@@ -57,7 +59,8 @@
                     <feather
                         :type="menuItem.icon"
                         class="top"
-                    ></feather>
+                    >
+                    </feather>
                     <span>
                         {{ $t(menuItem.title) }}
                     </span>
@@ -142,7 +145,7 @@
                         :key="index"
                         :class="{ active: childrenItem.active }"
                         v-show="childrenItem.role.includes(role)"
-                    >   
+                    >
                         <!-- Sub -->
                         <a
                             class="submenu-title"
@@ -175,8 +178,9 @@
                             <label
                                 :class="'badge badge-' + childrenItem.badgeType + ' pull-right'"
                                 v-if="childrenItem.badgeType"
-                                >{{ $t(childrenItem.badgeValue) }}</label
                             >
+                                {{ $t(childrenItem.badgeValue) }}
+                            </label>
                             <i
                                 class="fa fa-angle-right pull-right mt-1"
                                 v-if="childrenItem.children"
@@ -297,7 +301,7 @@ export default {
     data() {
         return {
             layoutobj: {},
-            role: ""
+            role: '',
         };
     },
 

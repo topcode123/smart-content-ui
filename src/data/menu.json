@@ -1,23 +1,59 @@
 {
     "data": [
-        
         {
             "title": "smart content",
             "icon": "airplay",
             "type": "sub",
             "badgeType": "light-secondary",
             "active": false,
+            "role": [
+                "admin",
+                "user"
+            ],
             "children": [
                 {
                     "path": "/smart-content/create-template",
                     "title": "Tạo template",
-                    "role": ["admin"],
+                    "role": [
+                        "admin"
+                    ],
                     "type": "link"
                 },
                 {
                     "path": "/smart-content/list-template",
                     "title": "Danh sách template",
-                    "role": ["user", "admin"],
+                    "role": [
+                        "user",
+                        "admin"
+                    ],
+                    "type": "link"
+                }
+            ]
+        },
+        {
+            "title": "Quản lý người dùng",
+            "icon": "user",
+            "type": "sub",
+            "badgeType": "light-secondary",
+            "active": false,
+            "role": [
+                "admin"
+            ],
+            "children": [
+                {
+                    "path": "/user/list-user",
+                    "title": "Danh sách người dùng",
+                    "role": [
+                        "admin"
+                    ],
+                    "type": "link"
+                },
+                {
+                    "path": "/user/create-user",
+                    "title": "Tạo người dùng người dùng",
+                    "role": [
+                        "admin"
+                    ],
                     "type": "link"
                 }
             ]
